@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenovo G50 OS Comparison</title>
+  <title>Lenovo G50 Complete OS Comparison</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: #0f172a; color: #f8fafc; padding: 2rem 1rem; line-height: 1.5; }
-    .container { max-width: 1100px; margin: 0 auto; }
+    .container { max-width: 1150px; margin: 0 auto; }
     header { text-align: center; margin-bottom: 2rem; }
     header h1 { font-size: 1.8rem; margin-bottom: 0.5rem; color: #38bdf8; }
     header p { color: #94a3b8; font-size: 0.95rem; }
@@ -15,7 +15,7 @@
     button { background: #1e293b; color: #f8fafc; border: 1px solid #334155; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: 0.2s ease; }
     button:hover, button.active { background: #38bdf8; color: #0f172a; font-weight: 600; border-color: #38bdf8; }
     .table-wrapper { overflow-x: auto; background: #1e293b; border-radius: 10px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); }
-    table { width: 100%; border-collapse: collapse; min-width: 750px; }
+    table { width: 100%; border-collapse: collapse; min-width: 800px; }
     th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #334155; vertical-align: top; }
     th { background-color: rgba(15, 23, 42, 0.6); color: #38bdf8; font-weight: 600; font-size: 0.95rem; }
     tr:last-child td { border-bottom: none; }
@@ -35,9 +35,10 @@
     </header>
 
     <div class="controls" id="filterButtons">
-      <button class="active" data-filter="all">Show All OS</button>
-      <button data-filter="recommended">Best Overall (Mint)</button>
-      <button data-filter="windows">Windows Options Only</button>
+      <button class="active" data-filter="all">Show All (9)</button>
+      <button data-filter="linux">Linux Distros</button>
+      <button data-filter="windows">Windows Builds</button>
+      <button data-filter="cloud">Cloud / Web OS</button>
     </div>
 
     <div class="table-wrapper">
@@ -56,6 +57,122 @@
     </div>
   </div>
 
-  <script src="index.js"></script>
+  <script>
+    const osData = [
+      {
+        name: "Linux Mint 22.3 (Xfce)",
+        category: "linux",
+        recommended: true,
+        speed: { badge: "good", label: "Very Fast", text: "~850 MB idle RAM. Minimal HDD thrashing." },
+        support: { badge: "good", label: "Active (2029)", text: "Full built-in Wi-Fi, audio, and touchpad drivers." },
+        security: { badge: "good", label: "High", text: "Official kernel & browser patches until April 2029." },
+        visuals: { badge: "good", label: "Clean & Crisp", text: "Classic taskbar layout; lightweight and customizable." }
+      },
+      {
+        name: "MX Linux 25 (Xfce)",
+        category: "linux",
+        recommended: true,
+        speed: { badge: "good", label: "Very Fast", text: "~650–700 MB idle RAM. Tuned for older hard drives." },
+        support: { badge: "good", label: "Active (Debian 13)", text: "Includes MX Tools for easy driver & codec setup." },
+        security: { badge: "good", label: "High", text: "Backed by Debian Stable security updates." },
+        visuals: { badge: "good", label: "Functional", text: "Clean desktop with customizable panel placement." }
+      },
+      {
+        name: "Arch Linux (Xfce / LXQt)",
+        category: "linux",
+        recommended: false,
+        speed: { badge: "good", label: "Fastest", text: "~500–700 MB idle RAM. Zero background bloat on HDD." },
+        support: { badge: "warn", label: "Rolling (DIY)", text: "Always up to date, but requires manual terminal setup." },
+        security: { badge: "good", label: "Very High", text: "Immediate upstream kernel and package security fixes." },
+        visuals: { badge: "warn", label: "Blank Slate", text: "Starts in terminal; you build and theme your desktop." }
+      },
+      {
+        name: "Zorin OS Lite",
+        category: "linux",
+        recommended: false,
+        speed: { badge: "good", label: "Fast", text: "~750–900 MB idle RAM. Smooth on 4GB systems." },
+        support: { badge: "good", label: "Active (Ubuntu LTS)", text: "Great out-of-the-box hardware compatibility." },
+        security: { badge: "good", label: "High", text: "Regular Ubuntu LTS security patches." },
+        visuals: { badge: "good", label: "Windows-Like", text: "Polished interface designed to mimic Windows 7/10." }
+      },
+      {
+        name: "ChromeOS Flex",
+        category: "cloud",
+        recommended: true,
+        speed: { badge: "good", label: "Very Fast (Web)", text: "Fast boot on HDD; built strictly for Chrome & web apps." },
+        support: { badge: "good", label: "Active (Google)", text: "Automatic background updates; works well on G50." },
+        security: { badge: "good", label: "Highest", text: "Verified boot, sandboxing, and read-only OS partition." },
+        visuals: { badge: "good", label: "Minimalist", text: "Clean Chromebook shelf and launcher UI." }
+      },
+      {
+        name: "Windows 10 IoT LTSC 2021",
+        category: "windows",
+        recommended: false,
+        speed: { badge: "good", label: "Fast (Windows)", text: "~1.0–1.2 GB idle RAM. No consumer bloatware." },
+        support: { badge: "good", label: "Active (2032)", text: "Full Lenovo Win10 drivers; official MS enterprise support." },
+        security: { badge: "good", label: "High", text: "Receives official Microsoft security updates until 2032." },
+        visuals: { badge: "good", label: "Clean Win10", text: "Classic Windows 10 look without Store or Cortana." }
+      },
+      {
+        name: "Tiny10 (23H2)",
+        category: "windows",
+        recommended: false,
+        speed: { badge: "good", label: "Fast", text: "~0.9–1.2 GB idle RAM. Fastest unofficial Windows on HDD." },
+        support: { badge: "bad", label: "Unsupported", text: "Unofficial community build; full Win10 driver support." },
+        security: { badge: "bad", label: "Low", text: "No ongoing security patches; native services stripped." },
+        visuals: { badge: "warn", label: "Basic", text: "Standard Windows 10 UI with visual effects disabled." }
+      },
+      {
+        name: "Official Windows 10 (22H2)",
+        category: "windows",
+        recommended: false,
+        speed: { badge: "warn", label: "Moderate / Slow", text: "~1.5–1.8 GB idle RAM. Background indexing spikes HDD." },
+        support: { badge: "warn", label: "Ended (Oct 2025)", text: "Official Lenovo drivers available, but OS is EOL." },
+        security: { badge: "bad", label: "Low", text: "No longer receives free Microsoft security updates." },
+        visuals: { badge: "good", label: "Familiar", text: "Full Windows 10 interface with smooth animations." }
+      },
+      {
+        name: "Tiny11",
+        category: "windows",
+        recommended: false,
+        speed: { badge: "bad", label: "Slowest", text: "~1.4–1.9 GB idle RAM. Heavy Win11 disk I/O causes lag." },
+        support: { badge: "bad", label: "Unsupported", text: "Unofficial build; needs generic or compatibility drivers." },
+        security: { badge: "warn", label: "Low / Moderate", text: "Modified system files and paused updates." },
+        visuals: { badge: "good", label: "Modern", text: "Windows 11 centered taskbar and rounded corners." }
+      }
+    ];
+
+    const tableBody = document.getElementById("tableBody");
+    const buttons = document.querySelectorAll("#filterButtons button");
+
+    function renderTable(filter) {
+      tableBody.innerHTML = "";
+      const filtered = osData.filter((os) => filter === "all" || os.category === filter);
+
+      filtered.forEach((os) => {
+        const row = document.createElement("tr");
+        if (os.recommended) row.classList.add("highlight");
+
+        row.innerHTML = `
+          <td><strong>${os.name}</strong></td>
+          <td><span class="badge ${os.speed.badge}">${os.speed.label}</span><span class="detail">${os.speed.text}</span></td>
+          <td><span class="badge ${os.support.badge}">${os.support.label}</span><span class="detail">${os.support.text}</span></td>
+          <td><span class="badge ${os.security.badge}">${os.security.label}</span><span class="detail">${os.security.text}</span></td>
+          <td><span class="badge ${os.visuals.badge}">${os.visuals.label}</span><span class="detail">${os.visuals.text}</span></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        buttons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderTable(btn.dataset.filter);
+      });
+    });
+
+    renderTable("all");
+  </script>
 </body>
 </html>
