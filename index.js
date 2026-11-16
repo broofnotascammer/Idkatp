@@ -1,6 +1,3 @@
-import React, { useState } from "react";
-import { createRoot } from "react-dom/client";
-
 const osData = [
   {
     name: "Linux Mint 22.3 (Xfce)",
@@ -36,146 +33,34 @@ const osData = [
   }
 ];
 
-function App() {
-  const [filter, setFilter] = useState("all");
+const tableBody = document.getElementById("tableBody");
+const buttons = document.querySelectorAll("#filterButtons button");
 
-  const filteredData = osData.filter((os) => {
-    if (filter === "all") return true;
-    return os.category === filter;
+function renderTable(filter) {
+  tableBody.innerHTML = "";
+  const filtered = osData.filter((os) => filter === "all" || os.category === filter);
+
+  filtered.forEach((os) => {
+    const row = document.createElement("tr");
+    if (os.category === "recommended") row.classList.add("highlight");
+
+    row.innerHTML = `
+      <td><strong>${os.name}</strong></td>
+      <td><span class="badge ${os.speed.badge}">${os.speed.label}</span><span class="detail">${os.speed.text}</span></td>
+      <td><span class="badge ${os.support.badge}">${os.support.label}</span><span class="detail">${os.support.text}</span></td>
+      <td><span class="badge ${os.security.badge}">${os.security.label}</span><span class="detail">${os.security.text}</span></td>
+      <td><span class="badge ${os.visuals.badge}">${os.visuals.label}</span><span class="detail">${os.visuals.text}</span></td>
+    `;
+    tableBody.appendChild(row);
   });
-
-  return (
-    <div style={styles.page}>
-      <style>{`
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #0f172a; color: #f8fafc; }
-        .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.4rem; text-transform: uppercase; }
-        .badge.good { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-        .badge.warn { background: rgba(234, 179, 8, 0.2); color: #eab308; }
-        .badge.bad  { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-      `}</style>
-
-      <div style={styles.container}>
-        <header style={styles.header}>
-          <h1 style={styles.title}>Lenovo G50 OS Comparison</h1>
-          <p style={styles.subtitle}>Tailored for 4GB RAM + Mechanical Hard Drive (HDD)</p>
-        </header>
-
-        <div style={styles.controls}>
-          {[
-            { id: "all", label: "Show All OS" },
-            { id: "recommended", label: "Best Overall (Mint)" },
-            { id: "windows", label: "Windows Options Only" }
-          ].map((btn) => (
-            <button
-              key={btn.id}
-              onClick={() => setFilter(btn.id)}
-              style={{
-                ...styles.button,
-                ...(filter === btn.id ? styles.activeButton : {})
-              }}
-            >
-              {btn.label}
-            </button>
-          ))}
-        </div>
-
-        <div style={styles.tableWrapper}>
-          <table style={styles.table}>
-            <thead>
-              <tr>
-                <th style={styles.th}>Operating System</th>
-                <th style={styles.th}>Speed &amp; RAM</th>
-                <th style={styles.th}>Support</th>
-                <th style={styles.th}>Security</th>
-                <th style={styles.th}>Visuals</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((os) => (
-                <tr
-                  key={os.name}
-                  style={os.category === "recommended" ? styles.highlightRow : {}}
-                >
-                  <td style={styles.td}>
-                    <strong>{os.name}</strong>
-                  </td>
-                  <td style={styles.td}>
-                    <span className={`badge ${os.speed.badge}`}>{os.speed.label}</span>
-                    <span style={styles.detail}>{os.speed.text}</span>
-                  </td>
-                  <td style={styles.td}>
-                    <span className={`badge ${os.support.badge}`}>{os.support.label}</span>
-                    <span style={styles.detail}>{os.support.text}</span>
-                  </td>
-                  <td style={styles.td}>
-                    <span className={`badge ${os.security.badge}`}>{os.security.label}</span>
-                    <span style={styles.detail}>{os.security.text}</span>
-                  </td>
-                  <td style={styles.td}>
-                    <span className={`badge ${os.visuals.badge}`}>{os.visuals.label}</span>
-                    <span style={styles.detail}>{os.visuals.text}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
 }
 
-const styles = {
-  page: { padding: "2rem 1rem", minHeight: "100vh", backgroundColor: "#0f172a", color: "#f8fafc" },
-  container: { maxWidth: "1100px", margin: "0 auto" },
-  header: { textAlign: "center", marginBottom: "2rem" },
-  title: { fontSize: "1.8rem", marginBottom: "0.5rem", color: "#38bdf8" },
-  subtitle: { color: "#94a3b8", fontSize: "0.95rem" },
-  controls: { display: "flex", flexWrap: "wrap", gap: "0.75rem", justifyContent: "center", marginBottom: "1.5rem" },
-  button: {
-    background: "#1e293b",
-    color: "#f8fafc",
-    border: "1px solid #334155",
-    padding: "0.5rem 1rem",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: "0.85rem"
-  },
-  activeButton: {
-    background: "#38bdf8",
-    color: "#0f172a",
-    fontWeight: "600",
-    borderColor: "#38bdf8"
-  },
-  tableWrapper: {
-    overflowX: "auto",
-    background: "#1e293b",
-    borderRadius: "10px",
-    border: "1px solid #334155",
-    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)"
-  },
-  table: { width: "100%", borderCollapse: "collapse", minWidth: "750px" },
-  th: {
-    padding: "1rem",
-    textAlign: "left",
-    borderBottom: "1px solid #334155",
-    backgroundColor: "rgba(15, 23, 42, 0.6)",
-    color: "#38bdf8",
-    fontWeight: "600",
-    fontSize: "0.95rem"
-  },
-  td: { padding: "1rem", textAlign: "left", borderBottom: "1px solid #334155", verticalAlign: "top" },
-  highlightRow: { backgroundColor: "rgba(56, 189, 248, 0.08)" },
-  detail: { display: "block", fontSize: "0.88rem", color: "#94a3b8" }
-};
+buttons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    buttons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderTable(btn.dataset.filter);
+  });
+});
 
-let container = document.getElementById("root");
-if (!container) {
-  container = document.createElement("div");
-  container.id = "root";
-  document.body.appendChild(container);
-}
-
-createRoot(container).render(<App />);
-  
+renderTable("all");
